@@ -1,2 +1,6 @@
 Database Outline in Words (5%)
 Tell me how the data is supposed to work. This is similar to the description I gave for the question 3 of
+assignment 1. What constraints should be in place. What tables are related to what other tables. A lot of
+the grading will be based on if things match this description of your database so make sure it is
+complete. If you say a constraint exist and you don’t enforce it, that is incorrect. If you enforce a
+constraint you don’t describe, that is incorrect.
