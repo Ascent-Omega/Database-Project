@@ -11,7 +11,7 @@
     <br>
     
 <table>
-    <h4>Example:</h4>
+    <h4>Game of Thrones Characters:</h4>
 	<tbody>
             <tr>
                 <td>
@@ -39,6 +39,7 @@
 </table>
     <br>
     <br>
+
     
 <fieldset>
 	<legend> Characters </legend>
@@ -50,40 +51,62 @@
 <br>
 <br>
     
+<form method="post" action=".php"> <!-- post to page handling form-->
 <fieldset>
 	<legend> Origin </legend>
-	<p>City: <input type="text" name="firstName" /> </p>
-	<p>Country: <input type="text" name="lastName" /> </p>
+	<p>City: <input type="text" name="city" /> </p>
+	<p>Country:
+        <select>
+            <option value="1">Unknown</option>
+            <option value="2">Kingdom of the North</option>
+            <option value="3">Kingdom of the Mountain and the Vale</option>
+            <option value="4">Kingdom of the Isles and Rivers</option>
+            <option value="5">Kingdom of the Rock</option>
+            <option value="6">Kingdom of the Stormlands</option>
+            <option value="7">Kingdom of the Reach</option>
+            <option value="8">Principality of Dorne</option>
+        </select>
+    </p>
+    
     <p><input type="submit" value="Insert into Table"></p>
+    
 </fieldset>
+</form>
 <br>
 <br>
     
+<form method="post" action=".php"> <!-- post to page handling form-->
 <fieldset>
 	<legend> Family </legend>
-	<p>Mother: <input type="text" name="firstName" /> </p>
-	<p>Father: <input type="text" name="lastName" /> </p>
-	<p>Sibling: <input type="text" name="age" /> </p>
+	<p>Mother: <input type="text" name="mother" /> </p>
+	<p>Father: <input type="text" name="father" /> </p>
+	<p>Sibling: <input type="text" name="sibling" /> </p>
     <p><input type="submit" value="Insert into Table"></p>
 </fieldset>
+</form>
 <br>
 <br> 
 
+<form method="post" action=".php"> <!-- post to page handling form-->
 <fieldset>
 	<legend> Title </legend>
-	<p>Character Title: <input type="text" name="firstName" /> </p>
+	<p>Character Title: <input type="text" name="title" /> </p>
     <p><input type="submit" value="Insert into Table"></p>
 </fieldset>
+</form>
 <br>
 <br>
     
+<form method="post" action=".php"> <!-- post to page handling form-->
 <fieldset>
 	<legend> Allegiance </legend>
-	<p>House: <input type="text" name="firstName" /> </p>
+	<p>House: <input type="text" name="allegiance" /> </p>
     <p><input type="submit" value="Insert into Table"></p>
 </fieldset>
 <br>
 <br>
+</form>
     
 </body>
 </html>
+
