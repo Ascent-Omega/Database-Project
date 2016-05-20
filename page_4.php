@@ -24,92 +24,103 @@ if($mysqli->connect_errno){
     <h4>Game of Thrones Characters:</h4>
 	<tbody>
             <tr>
-                <td>
-                    First Name
+				<td>
+                    Character
                 </td>
                 <td>
-                    Last Name
+                    Mother
                 </td>
                 <td>
-                    Age
+                    Father 
+                </td>
+                <td>
+                    Sibling
                 </td>
             </tr>
-			<!--
-			<tr>
-                <td>
-                    <a href="__.php?id=__">John</a> <!-- update later with PHP
-                </td>
-                <td>
-                    <a href=".php?id=">Snow</a>
-                </td>
-                <td>
-                    <a href=".php?id=">24</a>
-                </td>
-            </tr>	
-			-->
-			
 <?php
-
 if(isset($_POST["view"])){
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character`"))){
-		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
+	
+	if(! ($stmt = $mysqli->prepare("SELECT mother,father,sibling,first_name, last_name FROM family INNER JOIN `character` on family.cid = character.id"))){
+		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
 	}
-}
-
-
-if(isset($_POST["filter"])){
-
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character` WHERE age > ?"))){
-		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
+	
+	if(!($stmt->execute())){
+		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}
-
-	if(!($stmt->bind_param("i",$_POST['age']))){
-			echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
+	
+	if(!($stmt->bind_result($mother, $father, $sibling,$fname, $lname))){
+		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
 	}
+	
+	while($stmt->fetch()){
+		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $mother . "\n</td>\n<td>\n" . $father . "\n</td>\n<td>\n" . $sibling . "\n</td>\n</tr>";
+	}
+	
+	$stmt->close();
+
 }
 
 if(isset($_POST["add"])){
 	
-	if(!($stmt = $mysqli->prepare("INSERT INTO `character`(first_name, last_name, age, oid) VALUES (?,?,?,?)"))){
+	if(!($stmt = $mysqli->prepare("INSERT INTO `family` (`mother`, `father`, `sibling`, `cid`) VALUES (?,?,?,?)"))){
 		echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->bind_param("ssii",$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['origin']))){
+	if(!($stmt->bind_param("ssss",$_POST['mother'],$_POST['father'],$_POST['sibling'],$_POST['character']))){
 		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
-	}
-}
-
-if(!(isset($_POST["update"]))){
-	if(!$stmt->execute()){
-		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
-	}else if(isset($_POST["add"])){
-		echo "Added " . $stmt->affected_rows . " row(s) to character table.";
-	}
-}
-if(isset($_POST["add"])){
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character`"))){
-		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
 	}
 	
 	if(!$stmt->execute()){
+	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+	}else{
+		echo "Added " . $stmt->affected_rows . " row(s) to Family table.";
+	}
+
+	if(! ($stmt = $mysqli->prepare("SELECT mother,father,sibling,first_name, last_name FROM family INNER JOIN `character` on family.cid = character.id"))){
+		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->execute())){
 		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}
-}
-if(!(isset($_POST["update"]))){
-
-	if(!$stmt->bind_result($firstName, $lastName, $age)){
+	
+	if(!($stmt->bind_result($mother, $father, $sibling,$fname, $lname))){
 		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
 	}
-
+	
 	while($stmt->fetch()){
-		echo "<tr>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n</tr>";
+		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $mother . "\n</td>\n<td>\n" . $father . "\n</td>\n<td>\n" . $sibling . "\n</td>\n</tr>";
 	}
+
 	$stmt->close();
+
 }
 
+if(isset($_POST["filter"])){
+	
+	if(! ($stmt = $mysqli->prepare("SELECT mother,father,sibling,first_name, last_name FROM family INNER JOIN `character` on family.cid = character.id WHERE mother = ?"))){
+		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->bind_param("s",$_POST['mother']))){
+		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->execute())){
+		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->bind_result($mother, $father, $sibling,$fname, $lname))){
+		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+	}
+	
+	while($stmt->fetch()){
+		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $mother . "\n</td>\n<td>\n" . $father . "\n</td>\n<td>\n" . $sibling . "\n</td>\n</tr>";
+	}
 
-
-?>						
+	$stmt->close();
+}
+?>			
 	</tbody>
 </table>
     <br>
@@ -122,13 +133,13 @@ if(!(isset($_POST["update"]))){
         <p>First Name: <input type="text" name="firstName" /> </p>
         <p>Last Name: <input type="text" name="lastName" /> </p>
         <p>Age: <input type="text" name="age" /> </p>
-<!-- Move to another fieldset
+<!-- Move to another fieldset		
         <p>Rank: 
             <select>
                 <option value="1">Unknown Title</option>
             </select>
         </p>
-   -->
+        -->
         <p>Place of Origin: 
             <select name="origin">
                 <!-- <option value="1">Unknown City</option> -->
@@ -147,10 +158,10 @@ while($stmt->fetch()){
 	echo '<option value=" '. $id . ' "> ' . $city . ", " . $country . '</option>\n';
 }
 $stmt->close();
-?>				
+?>					
             </select>
         </p>
-<!-- Move to another fieldset
+		<!-- Move to another fieldset
         
         <p>Family Name: 
             <select>
@@ -176,7 +187,10 @@ $stmt->close();
     </fieldset>
 </form>
 
+
 <br>
+
+
    
 <form method="post" action="page_3.php"> <!-- post to page handling form-->
     <fieldset>
@@ -207,7 +221,6 @@ $stmt->close();
 		</p>
     </fieldset>
 </form>
-<br>
 <br>
     
 <form method="post" action="page_4.php"> <!-- post to page handling form-->
@@ -261,7 +274,6 @@ $stmt->close();
     </fieldset>
 </form>
 <br>
-<br>
     
 <form method="post" action=".php"> <!-- post to page handling form-->
     <fieldset>
@@ -273,7 +285,6 @@ $stmt->close();
         </p>
     </fieldset>
 </form>
-<br>
 <br>
 
     

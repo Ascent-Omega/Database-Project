@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","USER-db","PASS","USER-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","?-db","?","?-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -64,7 +64,7 @@ if(isset($_POST["add"])){
 	if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}else{
-		echo "Added " . $stmt->affected_rows . " row(s) to character table.";
+		echo "Added " . $stmt->affected_rows . " row(s) to Origin table.";
 	}
 
 	if(!($stmt = $mysqli->prepare("SELECT city, country FROM `origin`"))){
@@ -209,16 +209,42 @@ $stmt->close();
 </form>
 <br>
     
-<form method="post" action=".php"> <!-- post to page handling form-->
+<form method="post" action="page_4.php"> <!-- post to page handling form-->
 <fieldset>
 	<legend> Family </legend>
 	<p>Mother: <input type="text" name="mother" /> </p>
 	<p>Father: <input type="text" name="father" /> </p>
 	<p>Sibling: <input type="text" name="sibling" /> </p>
+	<p>
+		Character
+		<select name="character">
+<?php
+if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
+	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
+if(!$stmt->execute()){
+	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+}
+if(!$stmt->bind_result($id, $first_name, $last_name)){
+	echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+}
+while($stmt->fetch()){
+	echo '<option value=" '. $id . ' "> ' . $first_name . " " . $last_name . '</option>\n';
+}
+$stmt->close();
+?>				
+		</select>
+	</p>
     <p>
-        <input type="submit" value="Insert into Table">
-        <input type="submit" name="update" value="Update in Table">
-    </p>
+            <input type="submit" name="add" value="Insert into Table">
+            <input type="submit" name="update" value="Update in Table">
+			<input type="submit" name="view" value="View Entire Family Table">			
+        </p>
+		<p>
+			<div> Filter by Mother's name - Shows father or sibling depending on Mother entered </div>
+			<input type="submit" name="filter" value="Run Filter">
+		</p>
 </fieldset>
 </form>
 <br>
