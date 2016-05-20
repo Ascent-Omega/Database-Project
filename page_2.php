@@ -75,17 +75,17 @@ if(isset($_POST["add"])){
 	}
 	
 	if(!($stmt->bind_param("ssii",$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['origin']))){
-	echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
-}
-}
-
-
-if(!$stmt->execute()){
-	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
-}else if(isset($_POST["add"])){
-	echo "Added " . $stmt->affected_rows . " row(s) to character table.";
+		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
+	}
 }
 
+if(!(isset($_POST["update"]))){
+	if(!$stmt->execute()){
+		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+	}else if(isset($_POST["add"])){
+		echo "Added " . $stmt->affected_rows . " row(s) to character table.";
+	}
+}
 if(isset($_POST["add"])){
 	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character`"))){
 		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
@@ -95,14 +95,17 @@ if(isset($_POST["add"])){
 		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}
 }
-if(!$stmt->bind_result($firstName, $lastName, $age)){
-	echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
-}
+if(!(isset($_POST["update"]))){
 
-while($stmt->fetch()){
-	echo "<tr>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n</tr>";
+	if(!$stmt->bind_result($firstName, $lastName, $age)){
+		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+	}
+
+	while($stmt->fetch()){
+		echo "<tr>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n</tr>";
+	}
+	$stmt->close();
 }
-$stmt->close();
 
 
 
@@ -175,28 +178,33 @@ $stmt->close();
 
 <br>
    
-<form method="post" action=".php"> <!-- post to page handling form-->
+<form method="post" action="page_3.php"> <!-- post to page handling form-->
     <fieldset>
         <legend> Origin </legend>
         <p>City: <input type="text" name="city" /> </p>
         <p>Country:
-            <select>
-                <option value="1">Unknown</option>
-                <option value="2">Kingdom of the North</option>
-                <option value="3">Kingdom of the Mountain and the Vale</option>
-                <option value="4">Kingdom of the Isles and Rivers</option>
-                <option value="5">Kingdom of the Rock</option>
-                <option value="6">Kingdom of the Stormlands</option>
-                <option value="7">Kingdom of the Reach</option>
-                <option value="8">Principality of Dorne</option>
+            <select name="country">
+				<option value="Unknown">Unknown</option>
+                <option value="The North">The North</option>
+                <option value="The Iron Islands">The Iron Islands</option>
+                <option value="The Vale of Arynn">The Vale of Arynn</option>
+                <option value="The Riverlands">The Riverlands</option>
+                <option value="The Crownlands">The Crownlands</option>
+                <option value="The Stormlands">The Stormlands</option>
+                <option value="The Reach">The Reach</option>
+                <option value="Dorne">Dorne</option>
             </select>
         </p>
 
         <p>
-            <input type="submit" value="Insert into Table">
+            <input type="submit" name="add" value="Insert into Table">
             <input type="submit" name="update" value="Update in Table">
+			<input type="submit" name="view" value="View Entire Origin Table">
         </p>
-
+		<p>
+			<div> Filter by Country - Shows cities in a country </div>
+			<input type="submit" name="filter" value="Run Filter">
+		</p>
     </fieldset>
 </form>
 <br>
