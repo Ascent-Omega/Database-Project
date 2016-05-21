@@ -21,27 +21,39 @@ if($mysqli->connect_errno){
     <br>
     
 <table>
-    <h4>Game of Thrones Characters:</h4>
+    <h4>Game of Thrones Allegiance:</h4>
 	<tbody>
-            <tr>
-				<td>
-                    Character
+       <!--<tr>
+                <td>
+                    First Name
                 </td>
                 <td>
-                    Mother
+                    Last Name
                 </td>
                 <td>
-                    Father 
-                </td>
-                <td>
-                    Sibling
+                    Age
                 </td>
             </tr>
+			
+			<tr>
+                <td>
+                    <a href="__.php?id=__">John</a> 
+                </td>
+                <td>
+                    <a href=".php?id=">Snow</a>
+                </td>
+                <td>
+                    <a href=".php?id=">24</a>
+                </td>
+            </tr>
+			-->
 <?php
-// view all data from family table
+// view all houses in allegiance
 if(isset($_POST["view"])){
 	
-	if(! ($stmt = $mysqli->prepare("SELECT mother,father,sibling,first_name, last_name FROM family INNER JOIN `character` on family.cid = character.id"))){
+	echo "<tr>\n<td>\nHouse\n</td>\n</tr>\n"; 
+	
+	if(! ($stmt = $mysqli->prepare("SELECT house FROM `allegiance`"))){
 		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
 	}
 	
@@ -49,61 +61,45 @@ if(isset($_POST["view"])){
 		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->bind_result($mother, $father, $sibling,$fname, $lname))){
+	if(!($stmt->bind_result($house))){
 		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
 	}
 	
 	while($stmt->fetch()){
-		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $mother . "\n</td>\n<td>\n" . $father . "\n</td>\n<td>\n" . $sibling . "\n</td>\n</tr>";
+		echo "<tr>\n<td>\n" . $house . "\n</td>\n</tr>\n";
 	}
 	
 	$stmt->close();
 
 }
-// allows user to add data to family table by eslected character then displays added data
-if(isset($_POST["add"])){
+// has character swear allegiance to a house
+if(isset($_POST["add_to_sworn"])){
 	
-	if(!($stmt = $mysqli->prepare("INSERT INTO `family` (`mother`, `father`, `sibling`, `cid`) VALUES (?,?,?,?)"))){
+	if(!($stmt = $mysqli->prepare("INSERT INTO `sworn` (`aid`, `cid`)VALUES (?,?)"))){
 		echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->bind_param("ssss",$_POST['mother'],$_POST['father'],$_POST['sibling'],$_POST['character']))){
+	if(!($stmt->bind_param("ii",$_POST['house'], $_POST['character']))){
 		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 	
 	if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}else{
-		echo "Added " . $stmt->affected_rows . " row(s) to Family table.";
+		echo "Added " . $stmt->affected_rows . " row(s) to sworn table.";
 	}
 
-	if(! ($stmt = $mysqli->prepare("SELECT mother,father,sibling,first_name, last_name FROM family INNER JOIN `character` on family.cid = character.id"))){
+	echo "<tr>\n<td>\nCharacter\n</td>\n<td>\nHouse\n</td>\n</tr>\n"; 
+
+	
+	if(! ($stmt = $mysqli->prepare("SELECT c.first_name, c.last_name, a.house FROM `character` c
+									INNER JOIN sworn s ON c.id = s.cid
+									INNER JOIN allegiance a ON s.aid = a.id
+									WHERE a.id = ? AND c.id = ?"))){
 		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->execute())){
-		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
-	}
-	
-	if(!($stmt->bind_result($mother, $father, $sibling,$fname, $lname))){
-		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
-	}
-	
-	while($stmt->fetch()){
-		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $mother . "\n</td>\n<td>\n" . $father . "\n</td>\n<td>\n" . $sibling . "\n</td>\n</tr>";
-	}
-
-	$stmt->close();
-
-}
-// search function that allows user to enter mother's name and lists all characters with the entered name
-if(isset($_POST["filter"])){
-	
-	if(! ($stmt = $mysqli->prepare("SELECT mother,father,sibling,first_name, last_name FROM family INNER JOIN `character` on family.cid = character.id WHERE mother = ?"))){
-		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
-	}
-	
-	if(!($stmt->bind_param("s",$_POST['mother']))){
+	if(!($stmt->bind_param("ii",$_POST['house'], $_POST['character']))){
 		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 	
@@ -111,12 +107,71 @@ if(isset($_POST["filter"])){
 		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->bind_result($mother, $father, $sibling,$fname, $lname))){
+	if(!($stmt->bind_result($fname, $lname, $house))){
 		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
 	}
 	
 	while($stmt->fetch()){
-		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $mother . "\n</td>\n<td>\n" . $father . "\n</td>\n<td>\n" . $sibling . "\n</td>\n</tr>";
+		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $house . "\n</td>\n</tr>\n" ;
+	}
+
+	$stmt->close();
+
+}
+// views all characters that have sworn allegiance to a house
+if(isset($_POST["view_sworn"])){
+	
+	echo "<tr>\n<td>\nCharacter\n</td>\n<td>\nHouse\n</td>\n</tr>\n"; 
+
+	
+	if(! ($stmt = $mysqli->prepare("SELECT c.first_name, c.last_name, a.house FROM `character` c
+									INNER JOIN sworn s ON c.id = s.cid
+									INNER JOIN allegiance a ON s.aid = a.id"))){
+		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
+	}
+	
+	
+	if(!($stmt->execute())){
+		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->bind_result($fname, $lname, $house))){
+		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+	}
+	
+	while($stmt->fetch()){
+		echo "<tr>\n<td>\n" .$fname . " " . $lname ."\n</td>\n<td>\n". $house . "\n</td>\n</tr>\n" ;
+	}
+
+	$stmt->close();
+}
+// uses aggregate function to calculate how many characters have sworn to a house
+if(isset($_POST["total_sworn"])){
+	
+	echo "<tr>\n<td>\nHouse\n</td>\n<td>\nTotal Sworn\n</td>\n</tr>\n"; 
+
+	
+	if(! ($stmt = $mysqli->prepare("SELECT a.house as `House`, COUNT(c.id) as `Total Sworn` FROM `character` c
+									INNER JOIN sworn s ON c.id = s.cid
+									INNER JOIN allegiance a ON s.aid = a.id
+									WHERE a.id = ?"))){
+		echo "Prepare failed" . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->bind_param("i",$_POST['house']))){
+		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->execute())){
+		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->bind_result($house, $count))){
+		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+	}
+	
+	while($stmt->fetch()){
+		echo "<tr>\n<td>\n" .$house ."\n</td>\n<td>\n". $count . "\n</td>\n</tr>\n" ;
 	}
 
 	$stmt->close();

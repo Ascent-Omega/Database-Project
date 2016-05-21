@@ -70,6 +70,7 @@ if($mysqli->connect_errno){
             <select name="origin">
                 <!-- <option value="1">Unknown City</option> -->
 <?php
+// creates option for origin
 if(!($stmt = $mysqli->prepare("SELECT id, city, country FROM `origin`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
@@ -159,6 +160,7 @@ $stmt->close();
 		Character
 		<select name="character">
 <?php
+//creates option for characters
 if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
@@ -201,6 +203,7 @@ $stmt->close();
 		<p>Title:
 			<select name="char_title_id">
 <?php
+// option for title id
 if(!($stmt = $mysqli->prepare("SELECT id,character_title FROM `title`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
@@ -252,14 +255,65 @@ $stmt->close();
 </form>
 <br>
     
-<form method="post" action=".php"> <!-- post to page handling form-->
+<form method="post" action="page_6.php"> <!-- post to page handling form-->
     <fieldset>
         <legend> Allegiance </legend>
         <p>House: <input type="text" name="allegiance" /> </p>
         <p>
-            <input type="submit" value="Insert into Table">
+			<input type="submit" name="add" value="Insert into Table">
             <input type="submit" name="update" value="Update in Table">
+			<input type="submit" name="view" value="View Entire Allegiance Table">
         </p>
+		<p>
+			<div> Swears selected Character with selected House - ADD to sworn table </div>
+			<p>
+				House
+				<select name="house">
+<?php
+// option for house
+if(!($stmt = $mysqli->prepare("SELECT id, house FROM `allegiance`"))){
+	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
+if(!$stmt->execute()){
+	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+}
+if(!$stmt->bind_result($id, $house)){
+	echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+}
+while($stmt->fetch()){
+	echo '<option value=" '. $id . ' "> ' . $house . '</option>\n';
+}
+$stmt->close();
+?>				
+				</select>
+			</p>
+			Character
+		<select name="character">
+<?php
+if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
+	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
+if(!$stmt->execute()){
+	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+}
+if(!$stmt->bind_result($id, $first_name, $last_name)){
+	echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+}
+while($stmt->fetch()){
+	echo '<option value=" '. $id . ' "> ' . $first_name . " " . $last_name . '</option>\n';
+}
+$stmt->close();
+?>				
+		</select>
+	   </p>
+			<input type="submit" name="add_to_sworn" value="Swear Allegiance">
+			<input type="submit" name="view_sworn" value="View All Sworn">
+		</p>
+		<p> <div>Shows total number of characters sworn depending on selected House</div>
+			<input type="submit" name="total_sworn" value="View Total Sworn">
+		</p>
     </fieldset>
 </form>
 <br>
