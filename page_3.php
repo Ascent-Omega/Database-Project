@@ -249,14 +249,65 @@ $stmt->close();
 </form>
 <br>
 
-<form method="post" action=".php"> <!-- post to page handling form-->
+<form method="post" action="page_5.php"> <!-- post to page handling form-->
     <fieldset>
         <legend> Title </legend>
         <p>Character Title: <input type="text" name="title" /> </p>
         <p>
-            <input type="submit" value="Insert into Table">
+            <input type="submit" name="add" value="Insert into Table">
             <input type="submit" name="update" value="Update in Table">
+			<input type="submit" name="view" value="View Entire Title Table">
         </p>
+		<p>Title:
+			<select name="char_title_id">
+<?php
+if(!($stmt = $mysqli->prepare("SELECT id,character_title FROM `title`"))){
+	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
+if(!$stmt->execute()){
+	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+}
+if(!$stmt->bind_result($id,$character_title)){
+	echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+}
+while($stmt->fetch()){
+	echo '<option value="'. $id . '"> ' . $character_title  . '</option>\n';
+}
+$stmt->close();
+?>						
+				
+			</select>
+		</p>
+		<p>
+		Character
+		<select name="character">
+<?php
+if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
+	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+}
+
+if(!$stmt->execute()){
+	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+}
+if(!$stmt->bind_result($id, $first_name, $last_name)){
+	echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+}
+while($stmt->fetch()){
+	echo '<option value=" '. $id . ' "> ' . $first_name . " " . $last_name . '</option>\n';
+}
+$stmt->close();
+?>				
+		</select>
+	   </p>		
+		<p>
+			<div> Filter by Title - Shows characters with selected title </div>
+			<input type="submit" name="filter" value="Run Filter">
+		</p>
+		<p>
+			<div> Promote selected Character with selected Title - ADD to holds_rank table </div>
+			<input type="submit" name="promote" value="Give Title">
+		</p>
     </fieldset>
 </form>
 <br>
