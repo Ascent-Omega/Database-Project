@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","?-db","?","?-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db","7lNrX1pybWv6MFTO","ohya-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -17,9 +17,9 @@ if($mysqli->connect_errno){
     
 <body>
     <h1>CS340 Final Project</h1>
-    <h2>Game of Thrones Database (HTML WORK IN PROGRESS)</h2>
+    <h2>Game of Thrones Database</h2>
     <br>
-    
+    <h3>Sample:</h3>
 <table>
     <h4>Game of Thrones Characters:</h4>
 	<tbody>
@@ -33,6 +33,9 @@ if($mysqli->connect_errno){
                 <td>
                     Age
                 </td>
+                <td>
+                Origin ID
+                </td>
             </tr>
 			
 			<tr>
@@ -44,6 +47,9 @@ if($mysqli->connect_errno){
                 </td>
                 <td>
                     <a href=".php?id=">24</a>
+                </td>
+                <td>
+                    <a href=".php?id=">1</a>
                 </td>
             </tr>
 			
@@ -104,13 +110,37 @@ $stmt->close();
         -->
         <p>
             <input type="submit" name="add" value="Insert into Table">
+            <div>Select the ID of the character you wish to update:
+            </div>
+            <select name="charIDs">
+                <?php
+                    //creates option for characters' IDs
+                    if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+
+                    if(!$stmt->execute()){
+                        echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+                    }
+                    if(!$stmt->bind_result($id, $first_name, $last_name)){
+                        echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+                    }
+                    while($stmt->fetch()){
+                        echo '<option value=" '. $id . ' "> ' . $id . '</option>\n';
+                    }
+                    $stmt->close();
+                    ?>	
+            </select>
+            
             <input type="submit" name="update" value="Update in Table">
-			<input type="submit" name="view" value="View Full Character Table">
 		</p>
 		<p>
 			<div>Run filter by Age only. Shows characters older than entered age. </div>
 			<input type="submit" name="filter" value="Run Filter">
 		</p>
+        <p>
+            <input type="submit" name="view" value="View Full Character Table">
+        </p>
     </fieldset>
 </form>
 
@@ -134,6 +164,8 @@ $stmt->close();
                 <option value="The Stormlands">The Stormlands</option>
                 <option value="The Reach">The Reach</option>
                 <option value="Dorne">Dorne</option>
+                <option value="The Shadowlands">The Shadowlands</option>
+                <option value="Essos">Essos</option>
             </select>
         </p>
 
