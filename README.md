@@ -6,3 +6,7 @@
 6. Completed sworn INSERT/SELECT/Filter(Search - count by title) + house option and character option in allegiance field using PHP
 7. Completed allegiance SELECT +
 8. TODO - allegiance INSERT and UPDATES?(if you want)
+9. Completed allegiance INSERT
+10. 'Characters form' for page_1 and page_2 different from rest of pages while I am working out UPDATE for it
+11. Began final draft of project to hand in (Google Drive) few days ago
+12. Made it pretty

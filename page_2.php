@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","?-db","?","?-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db"," ","ohya-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -17,13 +17,16 @@ if($mysqli->connect_errno){
     
 <body>
     <h1>CS340 Final Project</h1>
-    <h2>Game of Thrones Database (HTML WORK IN PROGRESS)</h2>
+    <h2>Game of Thrones Database</h2>
     <br>
     
 <table>
     <h4>Game of Thrones Characters:</h4>
 	<tbody>
             <tr>
+                <td>
+                ID
+                </td>
                 <td>
                     First Name
                 </td>
@@ -32,6 +35,9 @@ if($mysqli->connect_errno){
                 </td>
                 <td>
                     Age
+                </td>
+                <td>
+                    Origin ID
                 </td>
             </tr>
 			<!--
@@ -51,7 +57,7 @@ if($mysqli->connect_errno){
 <?php
 // shows all character attributes with view button
 if(isset($_POST["view"])){
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character`"))){
+	if(! ($stmt = $mysqli->prepare( "SELECT id, first_name, last_name, age, oid FROM `character`"))){
 		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
 	}
 }
@@ -59,7 +65,7 @@ if(isset($_POST["view"])){
 // only used for filter, selects characters older than posted age
 if(isset($_POST["filter"])){
 
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character` WHERE age > ?"))){
+	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age, oid FROM `character` WHERE age > ?"))){
 		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
 	}
 
@@ -74,10 +80,11 @@ if(isset($_POST["add"])){
 		echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->bind_param("ssii",$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['origin']))){
+	if(!($stmt->bind_param("ssii",$_POST['id'],$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['oid']))){
 		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 }
+        
 // only if form is not posted with update
 if(!(isset($_POST["update"]))){
 	if(!$stmt->execute()){
@@ -88,7 +95,7 @@ if(!(isset($_POST["update"]))){
 }
 // only for add, displays sucessfully entered table data
 if(isset($_POST["add"])){
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age FROM `character`"))){
+	if(! ($stmt = $mysqli->prepare( "SELECT id, first_name, last_name, age, oid FROM `character`"))){
 		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
 	}
 	
@@ -99,16 +106,42 @@ if(isset($_POST["add"])){
 // only if not update
 if(!(isset($_POST["update"]))){
 
-	if(!$stmt->bind_result($firstName, $lastName, $age)){
+	if(!$stmt->bind_result($id, $firstName, $lastName, $age, $oid)){
 		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
 	}
 
 	while($stmt->fetch()){
-		echo "<tr>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n</tr>";
+		echo "<tr>\n<td>\n" . $id . "\n</td>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n<td>\n" . $oid . "\n</td>\n</tr>";
 	}
 	$stmt->close();
 }
+        
+        
+        
+// updates character table ********************************UNDERCONSTRUCT************
+if(isset($_POST["update"])){
+	
+	if(!($stmt = $mysqli->prepare("UPDATE `character` SET first_name=?, last_name=?, age=?, oid=? WHERE id=?"))){
+		echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+	}
+	
+	if(!($stmt->bind_param("issii",$_POST['id'],$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['oid']))){
+		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
+	}
+    
+    	if(!$stmt->bind_result($id, $firstName, $lastName, $age, $oid)){
+		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+	}
 
+	while($stmt->fetch()){
+		echo "<tr>\n<td>\n" . $id . "\n</td>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n<td>\n" . $oid . "\n</td>\n</tr>";
+	}
+    $stmt->close();
+}
+        
+
+        
+        
 
 
 ?>						
@@ -168,13 +201,37 @@ $stmt->close();
         -->
         <p>
             <input type="submit" name="add" value="Insert into Table">
+            <div>Select the ID of the character you wish to update:
+            </div>
+            <select name="charIDs">
+                <?php
+                    //creates option for characters' IDs
+                    if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+
+                    if(!$stmt->execute()){
+                        echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+                    }
+                    if(!$stmt->bind_result($id, $first_name, $last_name)){
+                        echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+                    }
+                    while($stmt->fetch()){
+                        echo '<option value=" '. $id . ' "> ' . $id . '</option>\n';
+                    }
+                    $stmt->close();
+                    ?>	
+            </select>
+            
             <input type="submit" name="update" value="Update in Table">
-			<input type="submit" name="view" value="View Full Character Table">
 		</p>
 		<p>
 			<div>Run filter by Age only. Shows characters older than entered age. </div>
 			<input type="submit" name="filter" value="Run Filter">
 		</p>
+        <p>
+            <input type="submit" name="view" value="View Full Character Table">
+        </p>
     </fieldset>
 </form>
 
@@ -195,6 +252,8 @@ $stmt->close();
                 <option value="The Stormlands">The Stormlands</option>
                 <option value="The Reach">The Reach</option>
                 <option value="Dorne">Dorne</option>
+                <option value="The Shadowlands">The Shadowlands</option>
+                <option value="Essos">Essos</option>
             </select>
         </p>
 

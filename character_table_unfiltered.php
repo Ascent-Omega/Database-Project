@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","patelhim-db","PASSWORD","patelhim-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db"," ","ohya-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -32,6 +32,9 @@ if($mysqli->connect_errno){
                 </td>
                 <td>
                     Age
+                </td>
+                <td>
+                    Origin ID
                 </td>
             </tr>
 			<!--
@@ -118,14 +121,17 @@ $stmt->close();
         <p>City: <input type="text" name="city" /> </p>
         <p>Country:
             <select>
-                <option value="1">Unknown</option>
-                <option value="2">Kingdom of the North</option>
-                <option value="3">Kingdom of the Mountain and the Vale</option>
-                <option value="4">Kingdom of the Isles and Rivers</option>
-                <option value="5">Kingdom of the Rock</option>
-                <option value="6">Kingdom of the Stormlands</option>
-                <option value="7">Kingdom of the Reach</option>
-                <option value="8">Principality of Dorne</option>
+                <option value="Unknown">Unknown</option>
+                <option value="The North">The North</option>
+                <option value="The Iron Islands">The Iron Islands</option>
+                <option value="The Vale of Arynn">The Vale of Arynn</option>
+                <option value="The Riverlands">The Riverlands</option>
+                <option value="The Crownlands">The Crownlands</option>
+                <option value="The Stormlands">The Stormlands</option>
+                <option value="The Reach">The Reach</option>
+                <option value="Dorne">Dorne</option>
+                <option value="The Shadowlands">The Shadowlands</option>
+                <option value="Essos">Essos</option>
             </select>
         </p>
 
