@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 //Turn on error reporting
 ini_set('display_errors', 'On');
