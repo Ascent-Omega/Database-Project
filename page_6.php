@@ -274,6 +274,27 @@ $stmt->close();
         -->
         <p>
             <input type="submit" name="add" value="Insert into Table">
+            <div>Select the ID of the character you wish to update:
+            </div>
+            <select name="charIDs">
+                <?php
+                    //creates option for characters' IDs
+                    if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
+                        echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
+                    }
+                    if(!$stmt->execute()){
+                        echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+                    }
+                    if(!$stmt->bind_result($id, $first_name, $last_name)){
+                        echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
+                    }
+                    while($stmt->fetch()){
+                        echo '<option value=" '. $id . ' "> ' . $id . '</option>\n';
+                    }
+                    $stmt->close();
+                    ?>	
+            </select>
+            
             <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Full Character Table">
 		</p>
@@ -311,7 +332,6 @@ $stmt->close();
 
         <p>
             <input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Origin Table">
         </p>
 		<p>
@@ -351,7 +371,6 @@ $stmt->close();
 	</p>
     <p>
             <input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Family Table">			
         </p>
 		<p>
@@ -368,7 +387,6 @@ $stmt->close();
         <p>Character Title: <input type="text" name="title" /> </p>
         <p>
             <input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Title Table">
         </p>
 		<p>Title:
@@ -431,7 +449,7 @@ $stmt->close();
         <p>House: <input type="text" name="allegiance" /> </p>
         <p>
 			<input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
+
 			<input type="submit" name="view" value="View Entire Allegiance Table">
         </p>
 		<p>

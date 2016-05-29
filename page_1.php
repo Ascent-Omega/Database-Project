@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db"," ","ohya-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db","","ohya-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -40,16 +40,16 @@ if($mysqli->connect_errno){
 			
 			<tr>
                 <td>
-                    <a href="__.php?id=__">John</a> 
+                    John
                 </td>
                 <td>
-                    <a href=".php?id=">Snow</a>
+                    Snow
                 </td>
                 <td>
-                    <a href=".php?id=">24</a>
+                    24
                 </td>
                 <td>
-                    <a href=".php?id=">1</a>
+                    1
                 </td>
             </tr>
 			
@@ -59,6 +59,7 @@ if($mysqli->connect_errno){
     <br>
 
     
+
 <form method="post" action="page_2.php"> <!-- post to page handling form-->    
     <fieldset>
         <legend> Characters </legend>
@@ -80,7 +81,6 @@ if($mysqli->connect_errno){
 if(!($stmt = $mysqli->prepare("SELECT id, city, country FROM `origin`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-
 if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 }
@@ -118,7 +118,6 @@ $stmt->close();
                     if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
                         echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
                     }
-
                     if(!$stmt->execute()){
                         echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
                     }
@@ -143,6 +142,7 @@ $stmt->close();
         </p>
     </fieldset>
 </form>
+
 
 
 <br>
@@ -171,7 +171,6 @@ $stmt->close();
 
         <p>
             <input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Origin Table">
         </p>
 		<p>
@@ -196,7 +195,6 @@ $stmt->close();
 if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-
 if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 }
@@ -212,7 +210,6 @@ $stmt->close();
 	</p>
     <p>
             <input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Family Table">			
         </p>
 		<p>
@@ -229,7 +226,6 @@ $stmt->close();
         <p>Character Title: <input type="text" name="title" /> </p>
         <p>
             <input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Title Table">
         </p>
 		<p>Title:
@@ -239,7 +235,6 @@ $stmt->close();
 if(!($stmt = $mysqli->prepare("SELECT id,character_title FROM `title`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-
 if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 }
@@ -261,7 +256,6 @@ $stmt->close();
 if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-
 if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 }
@@ -293,7 +287,6 @@ $stmt->close();
         <p>House: <input type="text" name="allegiance" /> </p>
         <p>
 			<input type="submit" name="add" value="Insert into Table">
-            <input type="submit" name="update" value="Update in Table">
 			<input type="submit" name="view" value="View Entire Allegiance Table">
         </p>
 		<p>
@@ -306,7 +299,6 @@ $stmt->close();
 if(!($stmt = $mysqli->prepare("SELECT id, house FROM `allegiance`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-
 if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 }
@@ -326,7 +318,6 @@ $stmt->close();
 if(!($stmt = $mysqli->prepare("SELECT id, first_name, last_name FROM `character`"))){
 	echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 }
-
 if(!$stmt->execute()){
 	echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
 }
@@ -353,4 +344,3 @@ $stmt->close();
     
 </body>
 </html>
-
