@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","patelhim-db","n9jrvv2Ri5CZunKm","patelhim-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","patelhim-db","Ps7ry1Weg5TwFgF8","patelhim-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -80,7 +80,7 @@ if(isset($_POST["add"])){
 		echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 	
-	if(!($stmt->bind_param("ssii",$_POST['id'],$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['oid']))){
+	if(!($stmt->bind_param("ssii", $_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['origin']))){
 		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 	}
 }
