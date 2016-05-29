@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db"," ","ohya-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","ohya-db","7lNrX1pybWv6MFTO","ohya-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -124,19 +124,25 @@ if(isset($_POST["update"])){
 	if(!($stmt = $mysqli->prepare("UPDATE `character` SET first_name=?, last_name=?, age=?, oid=? WHERE id=?"))){
 		echo "Prepare failed: "  . $stmt->errno . " " . $stmt->error;
 	}
+    
+    if(!$stmt->execute()){
+		echo "Execute failed: " . $stmt->errno . " " . $stmt->error;
+	}
 	
-	if(!($stmt->bind_param("issii",$_POST['id'],$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['oid']))){
+	if(!($stmt->bind_param("ssiii",$_POST['firstName'],$_POST['lastName'],$_POST['age'],$_POST['origin'],$_POST['charIDs']))){
 		echo "Bind failed: "  . $stmt->errno . " " . $stmt->error;
 	}
+
+    $stmt->execute();
     
-    	if(!$stmt->bind_result($id, $firstName, $lastName, $age, $oid)){
+    if(!$stmt->bind_result($firstName, $lastName, $age, $origin, $charIDs)){
 		echo "Bind failed: " . $stmt->errno . " " . $stmt->error;
 	}
 
 	while($stmt->fetch()){
-		echo "<tr>\n<td>\n" . $id . "\n</td>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n<td>\n" . $oid . "\n</td>\n</tr>";
+		echo "<tr>\n<td>\n" . $charIDs . "\n</td>\n<td>\n" . $firstName . "\n</td>\n<td>\n" . $lastName . "\n</td>\n<td>\n" . $age . "\n</td>\n<td>\n" . $origin . "\n</td>\n</tr>";
 	}
-    $stmt->close();
+	$stmt->close();
 }
         
 
