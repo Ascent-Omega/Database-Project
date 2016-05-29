@@ -2,7 +2,7 @@
 //Turn on error reporting
 ini_set('display_errors', 'On');
 //Connects to the database
-$mysqli = new mysqli("oniddb.cws.oregonstate.edu","patelhim-db","Ps7ry1Weg5TwFgF8","patelhim-db");
+$mysqli = new mysqli("oniddb.cws.oregonstate.edu","patelhim-db","pass","patelhim-db");
 if($mysqli->connect_errno){
 	echo "Connection error " . $mysqli->connect_errno . " " . $mysqli->connect_error;
 	}
@@ -65,7 +65,7 @@ if(isset($_POST["view"])){
 // only used for filter, selects characters older than posted age
 if(isset($_POST["filter"])){
 
-	if(! ($stmt = $mysqli->prepare( "SELECT first_name, last_name, age, oid FROM `character` WHERE age > ?"))){
+	if(! ($stmt = $mysqli->prepare( "SELECT id, first_name, last_name, age, oid FROM `character` WHERE age > ?"))){
 		echo "Prepare failed: " . $stmt->errno . " " . $stmt->error;
 	}
 
